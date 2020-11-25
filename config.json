@@ -1,0 +1,25 @@
+
+{
+    "production": {
+        "hostName": "localhost",
+        "listenPort": 3000,
+        "useHttps": true,
+        "httpsRedirectPort": 8080,
+        "httpsKeyFile": "/certs/alicerce.key",
+        "httpsCertFile": "/certs/alicerce.crt",
+        "rtcMinPort": 40000,
+        "rtcMaxPort": 49999,
+        "ip": "0.0.0.0",
+        "announcedIp": "3.18.108.210"
+    },
+
+    "development": {
+        "hostName": "localhost",
+        "listenPort": 80,
+        "useHttps": false,
+        "rtcMinPort": 40000,
+        "rtcMaxPort": 49999,
+        "ip": "127.0.0.1",
+        "announcedIp": null
+    }
+}

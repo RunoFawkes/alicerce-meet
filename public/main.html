@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="charset=UTF-8" />
+	
+	<title>Alicerce Meet</title>
+
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-179846453-2%22%3E"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+
+		gtag('config', 'UA-179846453-2');
+	</script>
+
+	<script src="/js/platform.js"></script>
+	<script src="/js/anchorme.js"></script>
+	<script src="/js/jquery-3.5.1.js"></script>
+	<script src="/js/mediasoup-client.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/js/main.js"></script>
+	<script src="/js/tag.js"></script>
+</head>
+
+<body>
+	<div id="splash_screen">
+		<div class="navbar">
+			<img src='/img/logo.png' />
+			<div id="title"></div>
+		</div>
+
+		<div class='stages'>
+			<div class='stage' data-stage='initializing'>
+				<div class="loader"></div>
+			</div>
+
+			<div class='stage' data-stage='loading'>
+				<div class="loader"></div>
+			</div>
+
+			<div class='stage' data-stage='disconnect'>
+				<p>A conexão com o servidor foi fechada. Isso pode ser uma queda de conexão. Tente recarregar a página.</p>
+				<button id='reload_page_button' class="button">RECARREGAR</button>
+			</div>
+
+			<div class='stage' data-stage='unsupported'>
+				<p>Este navegador não é suportado. Por favor, instale a versão mais atual do Google Chrome ou Apple Safari.</p>
+			</div>
+
+			<div class='stage' data-stage='exit'>
+				<p>Chamada finalizada.</p>
+			</div>
+
+			<div class='stage' data-stage='assessment'>
+				<iframe src="" id="assessment_iframe" title="MAPA Alicerce"></iframe>
+				<div class='input-container'>
+					<button id='close_asessment_button' class="button">MINIMIZAR</button>
+				</div>
+			</div>
+
+			<div class='stage' data-stage='preroom'>
+				<div class='input-container name-container'>
+					<label for="name_input">Digite seu nome</label>
+					<input type="text" name="name_input" id="name_input">
+					<span class='validation'></span>
+				</div>
+
+				<button id='confirm_eula_button' class="button">ENTRAR</button>
+
+				<div class='input-container eula-container'>
+					<input type="checkbox" id="eula" name="eula" checked>
+					<label for="eula">Li e concordo com os <a href="" target="_blank">Termos de Uso</a></label>
+				</div>
+			</div>
+
+			<div class='stage' data-stage='room'>
+				<div id="link_container" style="display: none;">
+					<p>
+						<span>Link do estudante: </span>
+						<input type='text' id='studentUrl'>
+					</p>
+				</div>
+			
+				<div class="main-container">
+					<div id="left">
+						<div id="teacher_container" class="feed-container"></div>
+			
+						<div id="local_container" class="feed-container">
+							<div class="user-feed local">
+								<div class="video-container">
+									<div class="video-wrapper">
+										<video id="local_video" muted playsinline></video>
+										<div id="meter_local" class='audio-meter'></div>
+									</div>
+								</div>
+								<div class="name-display" id="local_name"></div>
+							</div>
+						</div>
+			
+						<div id="local_controls">
+							<button id="toggle_mute_self_button" style="background-color: #ec7d00;" class='button-icon enabled' onclick="micToggleSelf()">
+								<img class="enabled" src="/img/icon/mic.svg" alt="">
+								<img class="disabled" src="/img/icon/mic-off.svg" alt="">
+							</button>
+			
+							<button id="toggle_camera_self_button" style="background-color: #0071bc" class='button-icon enabled' onclick="cameraToggleSelf()">
+								<img class="enabled" src="/img/icon/video.svg" alt="">
+								<img class="disabled" src="/img/icon/video-off.svg" alt="">
+							</button>
+			
+							<button id="share_screen_button" style="background-color: #0096b1;" class='button-icon' onclick="screenshare();">
+								<img class="enabled" src="/img/icon/monitor-1.svg" alt="">
+								<img class="disabled" src="/img/icon/monitor.svg" alt="">
+							</button>
+			
+							<button id="disconnect_self_button" style="background-color: #700940;" class='button-icon enabled' onclick="exit();">
+								<img src="/img/icon/phone-missed.svg" alt="">
+							</button>
+			
+							<div id="controls_loader">
+								<div class="loader-dots">
+									<div class="dot"></div>
+									<div class="dot"></div>
+									<div class="dot"></div>
+								  </div>
+							</div>
+						</div>
+			
+						<div id="teacher_controls">
+							<!--
+							<button id="mute_all_button" class='button' onclick="micToggleRemoteAll()">Silenciar Todos</button>
+							<button id="cameraoff_all_button" class='button' onclick="cameraToggleRemoteAll()">Desativar Todas as Cameras</button>
+							-->
+							<button id="disconnect_all_button" class='button' onclick="disconnectRemoteAll()">Desconectar Todos</button>
+						</div>
+					</div>
+			
+					<div id="tabs">
+						<button class='tab-button' data-room="1" onclick="goToRoom(1)">Sala 1</button>
+						<button class='tab-button' data-room="2" onclick="goToRoom(2)">Sala 2</button>
+						<button class='tab-button' data-room="3" onclick="goToRoom(3)">Sala 3</button>
+						<button class='tab-button' data-room="4" onclick="goToRoom(4)">Sala 4</button>
+					</div>
+			
+					<div id="middle">
+						<div id="chat">
+							<div id="messages"></div>
+			
+							<div id="writing_box">
+								<div class="writing-wrapper">
+									<textarea id="message_input" name="message_input" rows="2" cols="50" placeholder="Digite uma mensagem"></textarea>
+								</div>
+								<button id="submit_message" onclick="sendMessage('normal');">
+									<img src="/img/icon/paper-plane.svg" alt="">
+								</button>
+							</div>
+						</div>
+					</div>
+			
+					<div id="right">
+						<div id="remote_container" class="feed-container"></div>
+					</div>
+			
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="templates" type="text/x-maestro-template">
+		
+	</div><!-- /templates -->
+</body>
+
+</html>
